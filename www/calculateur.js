@@ -191,6 +191,7 @@ $(document).ready(function() {
     $('a[jeuvaleur]').on('click', function() {
         libellesValeurs = JeuxLibellesValeurs[$(this).attr('jeuvaleur')];
         AfficherLibellesValeurs();
+        ResoudreProblemes();
     })
 
     // Masquer les explications par défaut et les rendre montrables

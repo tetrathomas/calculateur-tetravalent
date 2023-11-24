@@ -1,0 +1,10 @@
+- Opérateur implique configurable
+- Problèmes avec opérateur implique :
+    - Contraposition (A => B == !B => !A)
+    - A => A
+- Masquer les explications par défaut et les rendre dépliables
+- Mettre les problèmes les uns à côté des autres ?
+
+- Parser de formules
+- Traitement des boucles de récusion dans les problèmes
+- Logique multivaluée

@@ -203,6 +203,28 @@ $(document).ready(function() {
         AfficherLibellesOperateurs();
     })
 
+    // Observer les changements de définition des opérateurs
+    $('div.definitions select').on('change', function() {
+        var name = $(this).attr('name').split('-');
+        var nomOperateur = name.shift(); // Premier élément
+        var operateur = null;
+        var args = name; // Autres éléments
+        switch (nomOperateur) {
+            case 'not': operateur = OperateurNot; break;
+            case 'egalstrict': operateur = OperateurEgalStrict; break;
+            case 'egalflou': operateur = OperateurEgalFlou; break;
+        }
+        switch (operateur.Arite) {
+            case 1:
+                operateur.Valeurs[parseInt(args[0][1], 10)] = parseInt($(this).val(), 10);
+                break;
+            case 2:
+                operateur.Valeurs[parseInt(args[0][1], 10)][parseInt(args[1][1], 10)] = parseInt($(this).val(), 10);
+                break;
+        }
+        ResoudreProblemes();
+    });
+
     ResoudreProblemes();
 
 });

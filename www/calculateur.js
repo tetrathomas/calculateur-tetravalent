@@ -86,6 +86,7 @@ class Probleme {
 
     Resoudre($solutions, $explications) {
         this.Solutions = [];
+        $explications.html('');
         $explications.append('Début de la résolution du problème.<br>');
         $explications.append('Recherche des variables.<br>');
         this.Variables = this.GetVariables();
@@ -164,7 +165,7 @@ var ResoudreProblemes = function() {
     $('div.probleme').each(function() {
         var idprobleme = $(this).find('[idprobleme]').attr('idprobleme');
         var probleme = new Probleme(idprobleme);
-        probleme.Resoudre($(this).find('p.solutions'), $(this).find('p.explications'));
+        probleme.Resoudre($(this).find('p.solutions'), $(this).find('.explications .details'));
     });
 }
 
@@ -191,6 +192,15 @@ $(document).ready(function() {
         libellesValeurs = JeuxLibellesValeurs[$(this).attr('jeuvaleur')];
         AfficherLibellesValeurs();
     })
+
+    // Masquer les explications par défaut et les rendre montrables
+    $('div.explications').each(function() {
+        var $explications = $(this);
+        $explications.find('.details').hide();
+        $explications.find('h4').css('cursor', 'pointer').on('click', function() {
+            $explications.find('.details').toggle();
+        });
+    });
 
     // Observer les changements de symboles des opérateurs
     $('table.operateurs input').on('change keypress keyup', function() {

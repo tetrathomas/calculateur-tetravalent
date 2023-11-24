@@ -6,183 +6,195 @@
     <script src="lib/jquery-3.7.1.min.js"></script>
     <script src="calculateur.js"></script>
     <style type="text/css">
-
+        .hbox {display: flex;}
+        .resultats {margin-left:20px;}
+        .probleme {margin:10px;border:1px solid gray;padding:10px;}
+        .probleme h3 {margin:0;text-align: center;}
+        .probleme h4 {margin:0;font-weight: normal;text-decoration: underline;}
     </style>
 </head>
 <body>
 
     <h1>Calculateur tétravalent</h1>
 
-    <h2>Définitions</h2>
+    <div class="hbox">
 
-    <div class="definitions">
+        <div class="definitions">
 
-        <h3 class="nomsvaleurs">Noms des valeurs</h3>
-        <table class="valeurs">
-            <tr>
-                <td>Faux</td>
-                <td><input type="text" name="v0"></td>
-            </tr>
-            <tr>
-                <td>Vrai</td>
-                <td><input type="text" name="v1"></td>
-            </tr>
-            <tr>
-                <td>Ni vrai ni faux</td>
-                <td><input type="text" name="v2"></td>
-            </tr>
-            <tr>
-                <td>Vrai et faux</td>
-                <td><input type="text" name="v3"></td>
-            </tr>
-        </table>
+            <h2>Définitions</h2>
 
-        <h3 class="symbolesoperateurs">Symboles des opérateurs</h3>
-        <table class="operateurs">
-            <tr>
-                <td>Egalité stricte</td>
-                <td><input type="text" name="egalstrict" value="=="></td>
-            </tr>
-            <tr>
-                <td>Egalité floue</td>
-                <td><input type="text" name="egalflou" value="="></td>
-            </tr>
-            <tr>
-                <td>Not</td>
-                <td><input type="text" name="not" value="!"></td>
-            </tr>
-            <tr>
-                <td>Implique</td>
-                <td><input type="text" name="implique" value="=>"></td>
-            </tr>
-        </table>
+            <h3 class="nomsvaleurs">Noms des valeurs</h3>
+            <table class="valeurs">
+                <tr>
+                    <td>Faux</td>
+                    <td><input type="text" name="v0"></td>
+                </tr>
+                <tr>
+                    <td>Vrai</td>
+                    <td><input type="text" name="v1"></td>
+                </tr>
+                <tr>
+                    <td>Ni vrai ni faux</td>
+                    <td><input type="text" name="v2"></td>
+                </tr>
+                <tr>
+                    <td>Vrai et faux</td>
+                    <td><input type="text" name="v3"></td>
+                </tr>
+            </table>
 
-        <h3 class="symbolesoperateurs">Définition des opérateurs</h3>
+            <h3 class="symbolesoperateurs">Symboles des opérateurs</h3>
+            <table class="operateurs">
+                <tr>
+                    <td>Egalité stricte</td>
+                    <td><input type="text" name="egalstrict" value="=="></td>
+                </tr>
+                <tr>
+                    <td>Egalité floue</td>
+                    <td><input type="text" name="egalflou" value="="></td>
+                </tr>
+                <tr>
+                    <td>Not</td>
+                    <td><input type="text" name="not" value="!"></td>
+                </tr>
+                <tr>
+                    <td>Implique</td>
+                    <td><input type="text" name="implique" value="=>"></td>
+                </tr>
+            </table>
 
-        <h4>Not</h4>
-        <table class="not">
-            <tr>
-                <td><span class="v0"></span></td>
-                <td><select class="valeurs" name="not-v0" defaut="1"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v1"></span></td>
-                <td><select class="valeurs" name="not-v1" defaut="0"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v2"></span></td>
-                <td><select class="valeurs" name="not-v2" defaut="2"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v3"></span></td>
-                <td><select class="valeurs" name="not-v3" defaut="3"></select></td>
-            </tr>
-        </table>
+            <h3 class="symbolesoperateurs">Définition des opérateurs</h3>
 
-        <h4>Egal strict</h4>
-        <table class="egalstrict">
-            <tr>
-                <td></td>
-                <td><span class="v0"></span></td>
-                <td><span class="v1"></span></td>
-                <td><span class="v2"></span></td>
-                <td><span class="v3"></span></td>
-            </tr>
-            <tr>
-                <td><span class="v0"></span></td>
-                <td><select class="valeurs" name="egalstrict-v0-v0" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalstrict-v0-v1" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v0-v2" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v0-v3" defaut="0"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v1"></span></td>
-                <td><select class="valeurs" name="egalstrict-v1-v0" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v1-v1" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalstrict-v1-v2" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v1-v3" defaut="0"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v2"></span></td>
-                <td><select class="valeurs" name="egalstrict-v2-v0" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v2-v1" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v2-v2" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalstrict-v2-v3" defaut="0"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v3"></span></td>
-                <td><select class="valeurs" name="egalstrict-v3-v0" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v3-v1" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v3-v2" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalstrict-v3-v3" defaut="1"></select></td>
-            </tr>
-        </table>
+            <h4>Not</h4>
+            <table class="not">
+                <tr>
+                    <td><span class="v0"></span></td>
+                    <td><select class="valeurs" name="not-v0" defaut="1"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v1"></span></td>
+                    <td><select class="valeurs" name="not-v1" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v2"></span></td>
+                    <td><select class="valeurs" name="not-v2" defaut="2"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v3"></span></td>
+                    <td><select class="valeurs" name="not-v3" defaut="3"></select></td>
+                </tr>
+            </table>
 
-        <h4>Egal flou</h4>
-        <table class="egalflou">
-            <tr>
-                <td></td>
-                <td><span class="v0"></span></td>
-                <td><span class="v1"></span></td>
-                <td><span class="v2"></span></td>
-                <td><span class="v3"></span></td>
-            </tr>
-            <tr>
-                <td><span class="v0"></span></td>
-                <td><select class="valeurs" name="egalflou-v0-v0" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalflou-v0-v1" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalflou-v0-v2" defaut="2"></select></td>
-                <td><select class="valeurs" name="egalflou-v0-v3" defaut="3"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v1"></span></td>
-                <td><select class="valeurs" name="egalflou-v1-v0" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalflou-v1-v1" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalflou-v1-v2" defaut="2"></select></td>
-                <td><select class="valeurs" name="egalflou-v1-v3" defaut="3"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v2"></span></td>
-                <td><select class="valeurs" name="egalflou-v2-v0" defaut="2"></select></td>
-                <td><select class="valeurs" name="egalflou-v2-v1" defaut="2"></select></td>
-                <td><select class="valeurs" name="egalflou-v2-v2" defaut="1"></select></td>
-                <td><select class="valeurs" name="egalflou-v2-v3" defaut="0"></select></td>
-            </tr>
-            <tr>
-                <td><span class="v3"></span></td>
-                <td><select class="valeurs" name="egalflou-v3-v0" defaut="3"></select></td>
-                <td><select class="valeurs" name="egalflou-v3-v1" defaut="3"></select></td>
-                <td><select class="valeurs" name="egalflou-v3-v2" defaut="0"></select></td>
-                <td><select class="valeurs" name="egalflou-v3-v3" defaut="1"></select></td>
-            </tr>
-        </table>
+            <h4>Egal strict</h4>
+            <table class="egalstrict">
+                <tr>
+                    <td></td>
+                    <td><span class="v0"></span></td>
+                    <td><span class="v1"></span></td>
+                    <td><span class="v2"></span></td>
+                    <td><span class="v3"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="v0"></span></td>
+                    <td><select class="valeurs" name="egalstrict-v0-v0" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v0-v1" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v0-v2" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v0-v3" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v1"></span></td>
+                    <td><select class="valeurs" name="egalstrict-v1-v0" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v1-v1" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v1-v2" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v1-v3" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v2"></span></td>
+                    <td><select class="valeurs" name="egalstrict-v2-v0" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v2-v1" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v2-v2" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v2-v3" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v3"></span></td>
+                    <td><select class="valeurs" name="egalstrict-v3-v0" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v3-v1" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v3-v2" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalstrict-v3-v3" defaut="1"></select></td>
+                </tr>
+            </table>
 
-    </div>
+            <h4>Egal flou</h4>
+            <table class="egalflou">
+                <tr>
+                    <td></td>
+                    <td><span class="v0"></span></td>
+                    <td><span class="v1"></span></td>
+                    <td><span class="v2"></span></td>
+                    <td><span class="v3"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="v0"></span></td>
+                    <td><select class="valeurs" name="egalflou-v0-v0" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalflou-v0-v1" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalflou-v0-v2" defaut="2"></select></td>
+                    <td><select class="valeurs" name="egalflou-v0-v3" defaut="3"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v1"></span></td>
+                    <td><select class="valeurs" name="egalflou-v1-v0" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalflou-v1-v1" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalflou-v1-v2" defaut="2"></select></td>
+                    <td><select class="valeurs" name="egalflou-v1-v3" defaut="3"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v2"></span></td>
+                    <td><select class="valeurs" name="egalflou-v2-v0" defaut="2"></select></td>
+                    <td><select class="valeurs" name="egalflou-v2-v1" defaut="2"></select></td>
+                    <td><select class="valeurs" name="egalflou-v2-v2" defaut="1"></select></td>
+                    <td><select class="valeurs" name="egalflou-v2-v3" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v3"></span></td>
+                    <td><select class="valeurs" name="egalflou-v3-v0" defaut="3"></select></td>
+                    <td><select class="valeurs" name="egalflou-v3-v1" defaut="3"></select></td>
+                    <td><select class="valeurs" name="egalflou-v3-v2" defaut="0"></select></td>
+                    <td><select class="valeurs" name="egalflou-v3-v3" defaut="1"></select></td>
+                </tr>
+            </table>
 
-    <h2>Premiers résultats</h2>
+        </div>
 
-    <div class="probleme">
-        <h3 class="propositions" idprobleme="1">P <span class="egalstrict"></span> P</h3>
-        <p class="solutions"></p>
-        <p class="explications"></p>
-    </div>
+        <div class="resultats">
 
-    <div class="probleme">
-        <h3 class="propositions" idprobleme="2">P <span class="egalstrict"></span> <span class="not"></span> <span class="not"></span> P</h3>
-        <p class="solutions"></p>
-        <p class="explications"></p>
-    </div>
+            <h2>Résultats</h2>
 
-    <div class="probleme">
-        <h3 class="propositions" idprobleme="3">P <span class="egalflou"></span> <span class="not"></span> P</h3>
-        <p class="solutions"></p>
-        <p class="explications"></p>
-    </div>
+            <div class="probleme">
+                <h3 class="propositions" idprobleme="1">P <span class="egalstrict"></span> P</h3>
+                <p class="solutions"></p>
+                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+            </div>
 
-    <div class="probleme">
-        <h3 class="propositions" idprobleme="4">P1 <span class="egalstrict"></span> P2</h3>
-        <p class="solutions"></p>
-        <p class="explications"></p>
+            <div class="probleme">
+                <h3 class="propositions" idprobleme="2">P <span class="egalstrict"></span> <span class="not"></span> <span class="not"></span> P</h3>
+                <p class="solutions"></p>
+                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+            </div>
+
+            <div class="probleme">
+                <h3 class="propositions" idprobleme="3">P <span class="egalflou"></span> <span class="not"></span> P</h3>
+                <p class="solutions"></p>
+                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+            </div>
+
+            <div class="probleme">
+                <h3 class="propositions" idprobleme="4">P1 <span class="egalstrict"></span> P2</h3>
+                <p class="solutions"></p>
+                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+            </div>
+
+        </div>
+
     </div>
 
 </body>

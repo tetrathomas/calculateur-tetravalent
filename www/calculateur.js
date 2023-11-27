@@ -104,6 +104,18 @@ class Probleme {
                     new Proposition(OperateurEgalFlou, [c, new Proposition(OperateurNot, [a])])
                 ];
                 break;
+            case "9": // P1 == (P2 = 0) ; P2 == (P3 = 0) ; P3 == (P1 = 2)
+                var p1 = new Variable('P1');
+                var p2 = new Variable('P2');
+                var p3 = new Variable('P3');
+                this.Propositions = [
+                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p3, V0])]),
+                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+                ];
+                break;
+
+
         }
     }
 
@@ -164,7 +176,7 @@ var Uniquifier = function(tableau) {
 
 var JeuxLibellesValeurs = {
     'Thomas': ['0', '1', 'A', 'T'],
-    'Nathan': ['F', 'T', 'N', 'B'],
+    'Norman': ['F', 'T', 'N', 'B'],
     'Ummo': ['AÏOOYEEDOO', 'AÏOOYAA', 'AÏOOYA AMMIÈ', 'AÏOOYAOU'],
     'Booléen': ['0^!1', '!0^1', '!0^!1', '0^1'],
 };

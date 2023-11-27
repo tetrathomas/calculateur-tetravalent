@@ -1,9 +1,9 @@
-- Opérateur implique configurable
-- Problèmes avec opérateur implique :
-    - Contraposition (A => B == !B => !A)
-    - A => A
+X Opérateur implique configurable
+X Problèmes avec opérateur implique :
+    X Contraposition (A => B == !B => !A)
+    X A => A
 X Masquer les explications par défaut et les rendre dépliables
-- Mettre les problèmes les uns à côté des autres ?
+X Mettre les problèmes les uns à côté des autres
 
 - Parser de formules
 - Traitement des boucles de récusion dans les problèmes

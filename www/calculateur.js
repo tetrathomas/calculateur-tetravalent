@@ -18,6 +18,7 @@ var V3 = new Operateur(0, 3);
 var OperateurNot = new Operateur(1, [1,0,2,3]);
 var OperateurEgalStrict = new Operateur(2, [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
 var OperateurEgalFlou = new Operateur(2, [[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]]);
+var OperateurImplique = new Operateur(2, [[1,1,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]]);
 
 class Proposition {
     constructor(operateur, args) {
@@ -72,6 +73,18 @@ class Probleme {
                 var p1 = new Variable('P1');
                 var p2 = new Variable('P2');
                 this.Propositions = [new Proposition(OperateurEgalStrict, [p1, p2])];
+                break;
+            case "5": // P => P
+                var p = new Variable('P');
+                this.Propositions = [new Proposition(OperateurImplique, [p, p])];
+                break;
+            case "6": // A => B == !B => !A
+                var a = new Variable('A');
+                var b = new Variable('B');
+                this.Propositions = [new Proposition(OperateurEgalStrict, [
+                    new Proposition(OperateurImplique, [a, b]),
+                    new Proposition(OperateurImplique, [new Proposition(OperateurNot, [a]), new Proposition(OperateurNot, [b])]),
+                ])];
                 break;
         }
     }
@@ -224,6 +237,7 @@ $(document).ready(function() {
             case 'not': operateur = OperateurNot; break;
             case 'egalstrict': operateur = OperateurEgalStrict; break;
             case 'egalflou': operateur = OperateurEgalFlou; break;
+            case 'implique': operateur = OperateurImplique; break;
         }
         switch (operateur.Arite) {
             case 1:

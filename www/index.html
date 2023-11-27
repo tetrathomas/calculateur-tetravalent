@@ -11,6 +11,8 @@
         .probleme {margin:10px;border:1px solid gray;padding:10px;}
         .probleme h3 {margin:0;text-align: center;}
         .probleme h4 {margin:0;font-weight: normal;text-decoration: underline;}
+        .problemes {display:flex;flex-wrap: wrap;}
+        .problemes .problem {min-width:200px;}
     </style>
 </head>
 <body>
@@ -163,34 +165,89 @@
                 </tr>
             </table>
 
+            <h4>Implique</h4>
+            <table class="implique">
+                <tr>
+                    <td></td>
+                    <td><span class="v0"></span></td>
+                    <td><span class="v1"></span></td>
+                    <td><span class="v2"></span></td>
+                    <td><span class="v3"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="v0"></span></td>
+                    <td><select class="valeurs" name="implique-v0-v0" defaut="1"></select></td>
+                    <td><select class="valeurs" name="implique-v0-v1" defaut="1"></select></td>
+                    <td><select class="valeurs" name="implique-v0-v2" defaut="2"></select></td>
+                    <td><select class="valeurs" name="implique-v0-v3" defaut="3"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v1"></span></td>
+                    <td><select class="valeurs" name="implique-v1-v0" defaut="0"></select></td>
+                    <td><select class="valeurs" name="implique-v1-v1" defaut="1"></select></td>
+                    <td><select class="valeurs" name="implique-v1-v2" defaut="2"></select></td>
+                    <td><select class="valeurs" name="implique-v1-v3" defaut="3"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v2"></span></td>
+                    <td><select class="valeurs" name="implique-v2-v0" defaut="2"></select></td>
+                    <td><select class="valeurs" name="implique-v2-v1" defaut="2"></select></td>
+                    <td><select class="valeurs" name="implique-v2-v2" defaut="1"></select></td>
+                    <td><select class="valeurs" name="implique-v2-v3" defaut="0"></select></td>
+                </tr>
+                <tr>
+                    <td><span class="v3"></span></td>
+                    <td><select class="valeurs" name="implique-v3-v0" defaut="3"></select></td>
+                    <td><select class="valeurs" name="implique-v3-v1" defaut="3"></select></td>
+                    <td><select class="valeurs" name="implique-v3-v2" defaut="0"></select></td>
+                    <td><select class="valeurs" name="implique-v3-v3" defaut="1"></select></td>
+                </tr>
+            </table>
+
         </div>
 
         <div class="resultats">
 
             <h2>Résultats</h2>
 
-            <div class="probleme">
-                <h3 class="propositions" idprobleme="1">P <span class="egalstrict"></span> P</h3>
-                <p class="solutions"></p>
-                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
-            </div>
+            <div class="problemes">
 
-            <div class="probleme">
-                <h3 class="propositions" idprobleme="2">P <span class="egalstrict"></span> <span class="not"></span> <span class="not"></span> P</h3>
-                <p class="solutions"></p>
-                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
-            </div>
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="1">P <span class="egalstrict"></span> P</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
 
-            <div class="probleme">
-                <h3 class="propositions" idprobleme="3">P <span class="egalflou"></span> <span class="not"></span> P</h3>
-                <p class="solutions"></p>
-                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
-            </div>
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="2">P <span class="egalstrict"></span> <span class="not"></span> <span class="not"></span> P</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
 
-            <div class="probleme">
-                <h3 class="propositions" idprobleme="4">P1 <span class="egalstrict"></span> P2</h3>
-                <p class="solutions"></p>
-                <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="3">P <span class="egalflou"></span> <span class="not"></span> P</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
+
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="4">P1 <span class="egalstrict"></span> P2</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
+
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="5">P <span class="implique"></span> P</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
+
+                <div class="probleme">
+                    <h3 class="propositions" idprobleme="6">(A <span class="implique"></span> B) <span class="egalstrict"></span> (<span class="not"></span>B <span class="implique"></span> <span class="not"></span>A)</h3>
+                    <p class="solutions"></p>
+                    <div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>
+                </div>
+
             </div>
 
         </div>

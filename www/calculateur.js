@@ -83,7 +83,7 @@ class Probleme {
                 var b = new Variable('B');
                 this.Propositions = [new Proposition(OperateurEgalStrict, [
                     new Proposition(OperateurImplique, [a, b]),
-                    new Proposition(OperateurImplique, [new Proposition(OperateurNot, [a]), new Proposition(OperateurNot, [b])]),
+                    new Proposition(OperateurImplique, [new Proposition(OperateurNot, [b]), new Proposition(OperateurNot, [a])]),
                 ])];
                 break;
         }

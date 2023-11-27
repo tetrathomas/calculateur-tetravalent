@@ -5,6 +5,8 @@ X Problèmes avec opérateur implique :
 X Masquer les explications par défaut et les rendre dépliables
 X Mettre les problèmes les uns à côté des autres
 
+Travailler les opérateurs OU et ET et XOU
+
 - Parser de formules
 - Traitement des boucles de récusion dans les problèmes
 - Logique multivaluée

@@ -18,7 +18,7 @@ var V3 = new Operateur(0, 3);
 var OperateurNot = new Operateur(1, [1,0,2,3]);
 var OperateurEgalStrict = new Operateur(2, [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
 var OperateurEgalFlou = new Operateur(2, [[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]]);
-var OperateurImplique = new Operateur(2, [[1,1,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]]);
+var OperateurImplique = new Operateur(2, [[1,1,1,1],[0,1,2,3],[2,1,1,0],[3,1,0,1]]);
 
 class Proposition {
     constructor(operateur, args) {
@@ -86,6 +86,24 @@ class Probleme {
                     new Proposition(OperateurImplique, [new Proposition(OperateurNot, [b]), new Proposition(OperateurNot, [a])]),
                 ])];
                 break;
+            case "7": // A = !B ; B = !A
+                var a = new Variable('A');
+                var b = new Variable('B');
+                this.Propositions = [
+                    new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
+                    new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [a])])
+                ];
+                break;
+            case "8": // A = !B ; B = !C ; C = !A
+                var a = new Variable('A');
+                var b = new Variable('B');
+                var c = new Variable('C');
+                this.Propositions = [
+                    new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
+                    new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [c])]),
+                    new Proposition(OperateurEgalFlou, [c, new Proposition(OperateurNot, [a])])
+                ];
+                break;
         }
     }
 
@@ -108,16 +126,18 @@ class Probleme {
         this.Variables[0].Valeur = -1; // Pour passer le premier while
         while(this.IncrementerVariable(0)) {
             $explications.append('Calcul des propositions avec les valuations suivantes : ' + this.Variables.map(function(v) {return v.Nom + '::' + libellesValeurs[v.Valeur];}).join(', ') + '<br>');
+            var toutesvraies = true;
             for (var ip in this.Propositions) {
                 var p = this.Propositions[ip];
                 var vp = p.Calculer();
                 $explications.append('La proposition ' + ip + ' prend la valeur ' + libellesValeurs[vp] + '<br>');
-                if (vp == 1) {
-                    this.Solutions.push(this.Variables.map(function(v) {return v.Valeur}));
-                }
+                if (vp != 1) toutesvraies = false;
+            }
+            if (toutesvraies) {
+                this.Solutions.push(this.Variables.map(function(v) {return v.Valeur}));
             }
         }
-        $solutions.html('Solutions trouvées : <br>' + this.Solutions.map(function(s) {return s.map(function(v) {return libellesValeurs[v]}).join(',') }).join('<br>'));
+        $solutions.html('Solutions trouvées (' + this.Solutions.length + ') : <br>' + this.Solutions.map(function(s) {return s.map(function(v) {return libellesValeurs[v]}).join(',') }).join('<br>'));
     }
     InitialiserVariables() {
         for (var v of this.Variables) v.Valeur = 0;

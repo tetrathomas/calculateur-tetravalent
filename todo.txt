@@ -5,6 +5,7 @@ X Problèmes avec opérateur implique :
 X Masquer les explications par défaut et les rendre dépliables
 X Mettre les problèmes les uns à côté des autres
 
+Ajouter des problèmes avec plusieurs propositions
 Travailler les opérateurs OU et ET et XOU
 
 - Parser de formules

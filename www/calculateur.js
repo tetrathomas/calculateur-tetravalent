@@ -1,24 +1,39 @@
+var CalculsDetailles = false;
+
 class Operateur {
-    constructor(arite, valeurs) {
+    constructor(arite, valeurs, nom) {
         this.Arite = arite;
         this.Valeurs = valeurs;
+        this.Nom = nom;
     }
-    Calculer(args) {
+    Calculer(args, $explications) {
+        var resultat;
+        var valeursArgs = [];
         switch (this.Arite) {
-            case 0: return this.Valeurs;
-            case 1: return this.Valeurs[args[0].Calculer()];
-            case 2: return this.Valeurs[args[0].Calculer()][args[1].Calculer()];
+            case 0: resultat = this.Valeurs; break;
+            case 1:
+                valeursArgs.push(args[0].Calculer($explications));
+                resultat = this.Valeurs[valeursArgs[0]];
+                break;
+            case 2:
+                valeursArgs.push(args[0].Calculer($explications));
+                valeursArgs.push(args[1].Calculer($explications));
+                resultat = this.Valeurs[valeursArgs[0]][valeursArgs[1]];
+                break;
         }
+        if ($explications && CalculsDetailles && this.Arite >= 0)
+            $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + valeursArgs.join(',') + ' :' + libellesValeurs[resultat] + '<br>');
+        return resultat;
     }
 }
 var V0 = new Operateur(0, 0);
 var V1 = new Operateur(0, 1);
 var V2 = new Operateur(0, 2);
 var V3 = new Operateur(0, 3);
-var OperateurNot = new Operateur(1, [1,0,2,3]);
-var OperateurEgalStrict = new Operateur(2, [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
-var OperateurEgalFlou = new Operateur(2, [[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]]);
-var OperateurImplique = new Operateur(2, [[1,1,1,1],[0,1,2,3],[2,1,1,0],[3,1,0,1]]);
+var OperateurNot = new Operateur(1, [1,0,2,3], 'Not');
+var OperateurEgalStrict = new Operateur(2, [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], 'Egal strict');
+var OperateurEgalFlou = new Operateur(2, [[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]], 'Egal flou');
+var OperateurImplique = new Operateur(2, [[1,1,1,1],[0,1,2,3],[2,1,1,0],[3,1,0,1]], 'Implique');
 
 class Proposition {
     constructor(operateur, args) {
@@ -33,8 +48,8 @@ class Proposition {
         }
         return Uniquifier(variables);
     }
-    Calculer() {
-        return this.Operateur.Calculer(this.Arguments);
+    Calculer($explications) {
+        return this.Operateur.Calculer(this.Arguments, $explications);
     }
 }
 class Variable {
@@ -114,6 +129,34 @@ class Probleme {
                     new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
                 ];
                 break;
+            case "10": // P1 == (P2 = 0) ; P2 == (P1 = 0) ; P3 == (P1 = 2)
+                var p1 = new Variable('P1');
+                var p2 = new Variable('P2');
+                var p3 = new Variable('P3');
+                this.Propositions = [
+                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V0])]),
+                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+                ];
+                break;
+            case "11": // P1 == (P2 = 0) ; P2 == (P1 = 1)
+                var p1 = new Variable('P1');
+                var p2 = new Variable('P2');
+                this.Propositions = [
+                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])])
+                ];
+                break;
+            case "12": // P1 == (P2 = 0) ; P2 == (P1 = 1) ; P3 == (P1 = 2)
+                var p1 = new Variable('P1');
+                var p2 = new Variable('P2');
+                var p3 = new Variable('P3');
+                this.Propositions = [
+                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])]),
+                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+                ];
+                break;
 
 
         }
@@ -141,7 +184,7 @@ class Probleme {
             var toutesvraies = true;
             for (var ip in this.Propositions) {
                 var p = this.Propositions[ip];
-                var vp = p.Calculer();
+                var vp = p.Calculer($explications);
                 $explications.append('La proposition ' + ip + ' prend la valeur ' + libellesValeurs[vp] + '<br>');
                 if (vp != 1) toutesvraies = false;
             }
@@ -238,6 +281,11 @@ $(document).ready(function() {
         AfficherLibellesValeurs();
         ResoudreProblemes();
     })
+
+    $('input[name=details]').on('change', function() {
+        CalculsDetailles = $(this).is(':checked');
+        ResoudreProblemes();
+    });
 
     // Masquer les explications par défaut et les rendre montrables
     $('div.explications').each(function() {

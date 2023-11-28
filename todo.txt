@@ -10,6 +10,7 @@ Rendre facultatif la résolution des problèmes un à un (à cause des problème
 
 Ajouter des problèmes avec plusieurs propositions
 Travailler les opérateurs OU et ET et XOU
+Travailler sur l'inférence : A == 1 ; A => B
 
 - Parser de formules
 - Traitement des boucles de récusion dans les problèmes

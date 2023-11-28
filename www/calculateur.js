@@ -25,6 +25,10 @@ class Operateur {
             $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + valeursArgs.join(',') + ' :' + libellesValeurs[resultat] + '<br>');
         return resultat;
     }
+    ToString() {
+        if (this.Arite == 0) return libellesValeurs[this.Valeurs];
+        return this.Nom;
+    }
 }
 var V0 = new Operateur(0, 0);
 var V1 = new Operateur(0, 1);
@@ -51,6 +55,15 @@ class Proposition {
     Calculer($explications) {
         return this.Operateur.Calculer(this.Arguments, $explications);
     }
+    ToString() {
+        var str = this.Operateur.ToString();
+        if (this.Arguments.length > 0) {
+            str += '(';
+            str += this.Arguments.map(function(e) { return e.ToString(); }).join(', ');
+            str += ')';
+        }
+        return str;
+    }
 }
 class Variable {
     constructor(nom) {
@@ -59,6 +72,9 @@ class Variable {
     }
     Calculer() {
         return this.Valeur;
+    }
+    ToString() {
+        return this.Nom;
     }
 }
 
@@ -157,9 +173,11 @@ class Probleme {
                     new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
                 ];
                 break;
-
-
         }
+    }
+
+    ToString() {
+        return this.Propositions.map(function(p) {return p.ToString()}).join (' ; ');
     }
 
     GetVariables() {

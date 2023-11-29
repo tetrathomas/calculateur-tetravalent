@@ -192,6 +192,7 @@ class Probleme {
         this.Solutions = [];
         $explications.html('');
         $explications.append('Début de la résolution du problème.<br>');
+        $explications.append('Description du problème : ' + this.ToString() + '.<br>');
         $explications.append('Recherche des variables.<br>');
         this.Variables = this.GetVariables();
         $explications.append('Variables trouvées (' + this.Variables.length + ') : ' + this.Variables.map(function(v) {return v.Nom}).join(', ') + '<br>');
@@ -311,6 +312,22 @@ $(document).ready(function() {
         $explications.find('.details').hide();
         $explications.find('h4').css('cursor', 'pointer').on('click', function() {
             $explications.find('.details').toggle();
+        });
+    });
+
+    // Permettre de déplier les paramètres des opérateurs
+    $('div.operateur').each(function() {
+        var $operateur = $(this);
+        $operateur.find('h4').append('<span class="toggler"> &#9658;</span>').css('cursor', 'pointer').on('click', function() {
+            $table = $operateur.find('table');
+            $operateur.find('.toggler').remove();
+            if ($table.is(':visible')) {
+                $table.hide();
+                $operateur.find('h4').append('<span class="toggler"> &#9658;</span>')
+            } else {
+                $table.show();
+                $operateur.find('h4').append('<span class="toggler"> &#9660;</span>')
+            }
         });
     });
 

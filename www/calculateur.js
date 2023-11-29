@@ -289,11 +289,11 @@ $(document).ready(function() {
     AfficherLibellesOperateurs();
 
     // Afficher les jeux de libellés de valeurs
-    var html = $('h3.nomsvaleurs').html();
+    var html = $('.jeuxnomsvaleurs').html();
     for (var i in JeuxLibellesValeurs) {
-        html += ' <a href="#" jeuvaleur="' + i + '">' + i + '</a>';
+        html += '<br><a href="#" jeuvaleur="' + i + '">' + i + '</a>';
     }
-    $('h3.nomsvaleurs').html(html);
+    $('.jeuxnomsvaleurs').html(html);
 
     $('a[jeuvaleur]').on('click', function() {
         libellesValeurs = JeuxLibellesValeurs[$(this).attr('jeuvaleur')];
@@ -319,20 +319,20 @@ $(document).ready(function() {
     $('div.operateur').each(function() {
         var $operateur = $(this);
         $operateur.find('h4').append('<span class="toggler"> &#9658;</span>').css('cursor', 'pointer').on('click', function() {
-            $table = $operateur.find('table');
+            $depliable = $operateur.find('.depliable');
             $operateur.find('.toggler').remove();
-            if ($table.is(':visible')) {
-                $table.hide();
+            if ($depliable.is(':visible')) {
+                $depliable.hide();
                 $operateur.find('h4').append('<span class="toggler"> &#9658;</span>')
             } else {
-                $table.show();
+                $depliable.show();
                 $operateur.find('h4').append('<span class="toggler"> &#9660;</span>')
             }
         });
     });
 
-    // Observer les changements de symboles des opérateurs
-    $('table.operateurs input').on('change keypress keyup', function() {
+    // Observer les changements de symbole des opérateurs
+    $('input.symboleoperateur').on('change keypress keyup', function() {
         switch ($(this).attr('name')) {
             case 'egalstrict': libelleOperateurEgalstrict = $(this).val(); break;
             case 'egalflou': libelleOperateurEgalflou = $(this).val(); break;

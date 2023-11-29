@@ -30,14 +30,6 @@ class Operateur {
         return this.Nom;
     }
 }
-var V0 = new Operateur(0, 0);
-var V1 = new Operateur(0, 1);
-var V2 = new Operateur(0, 2);
-var V3 = new Operateur(0, 3);
-var OperateurNot = new Operateur(1, [1,0,2,3], 'Not');
-var OperateurEgalStrict = new Operateur(2, [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], 'Egal strict');
-var OperateurEgalFlou = new Operateur(2, [[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]], 'Egal flou');
-var OperateurImplique = new Operateur(2, [[1,1,1,1],[0,1,2,3],[2,1,1,0],[3,1,0,1]], 'Implique');
 
 class Proposition {
     constructor(operateur, args) {
@@ -80,100 +72,11 @@ class Variable {
 
 class Probleme {
 
-    constructor(idprobleme) {
-        this.IdProbleme = idprobleme;
-        this.Propositions = [];
-
-        // Données des problèmes prédéfinis (code pas très bien placé pour un principe vite fait mal fait)
-        switch (this.IdProbleme) {
-            case "1":
-                var p = new Variable('P');
-                this.Propositions = [new Proposition(OperateurEgalStrict, [p,p])]
-                break;
-            case "2":
-                var p = new Variable('P');
-                this.Propositions = [new Proposition(OperateurEgalStrict, [p,
-                    new Proposition(OperateurNot, [new Proposition(OperateurNot, [p])])
-                ])];
-                break;
-            case "3":
-                var p = new Variable('P');
-                this.Propositions = [new Proposition(OperateurEgalFlou, [p, new Proposition(OperateurNot, [p])])];
-                break;
-            case "4":
-                var p1 = new Variable('P1');
-                var p2 = new Variable('P2');
-                this.Propositions = [new Proposition(OperateurEgalStrict, [p1, p2])];
-                break;
-            case "5": // P => P
-                var p = new Variable('P');
-                this.Propositions = [new Proposition(OperateurImplique, [p, p])];
-                break;
-            case "6": // A => B == !B => !A
-                var a = new Variable('A');
-                var b = new Variable('B');
-                this.Propositions = [new Proposition(OperateurEgalStrict, [
-                    new Proposition(OperateurImplique, [a, b]),
-                    new Proposition(OperateurImplique, [new Proposition(OperateurNot, [b]), new Proposition(OperateurNot, [a])]),
-                ])];
-                break;
-            case "7": // A = !B ; B = !A
-                var a = new Variable('A');
-                var b = new Variable('B');
-                this.Propositions = [
-                    new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
-                    new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [a])])
-                ];
-                break;
-            case "8": // A = !B ; B = !C ; C = !A
-                var a = new Variable('A');
-                var b = new Variable('B');
-                var c = new Variable('C');
-                this.Propositions = [
-                    new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
-                    new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [c])]),
-                    new Proposition(OperateurEgalFlou, [c, new Proposition(OperateurNot, [a])])
-                ];
-                break;
-            case "9": // P1 == (P2 = 0) ; P2 == (P3 = 0) ; P3 == (P1 = 2)
-                var p1 = new Variable('P1');
-                var p2 = new Variable('P2');
-                var p3 = new Variable('P3');
-                this.Propositions = [
-                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
-                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p3, V0])]),
-                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
-                ];
-                break;
-            case "10": // P1 == (P2 = 0) ; P2 == (P1 = 0) ; P3 == (P1 = 2)
-                var p1 = new Variable('P1');
-                var p2 = new Variable('P2');
-                var p3 = new Variable('P3');
-                this.Propositions = [
-                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
-                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V0])]),
-                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
-                ];
-                break;
-            case "11": // P1 == (P2 = 0) ; P2 == (P1 = 1)
-                var p1 = new Variable('P1');
-                var p2 = new Variable('P2');
-                this.Propositions = [
-                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
-                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])])
-                ];
-                break;
-            case "12": // P1 == (P2 = 0) ; P2 == (P1 = 1) ; P3 == (P1 = 2)
-                var p1 = new Variable('P1');
-                var p2 = new Variable('P2');
-                var p3 = new Variable('P3');
-                this.Propositions = [
-                    new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
-                    new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])]),
-                    new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
-                ];
-                break;
-        }
+    constructor(args) {
+        this.Nom = args.Nom;
+        this.Description = args.Description;
+        this.Propositions = args.Propositions;
+        this.Formule = args.Formule;
     }
 
     ToString() {
@@ -188,7 +91,9 @@ class Probleme {
         return Uniquifier(variables);
     }
 
-    Resoudre($solutions, $explications) {
+    Resoudre() {
+        var $solutions = this.$div.find('p.solutions');
+        var $explications = this.$div.find('.explications .details');
         this.Solutions = [];
         $explications.html('');
         $explications.append('Début de la résolution du problème.<br>');
@@ -227,8 +132,29 @@ class Probleme {
             return true;
         }
     }
+    ToHtml() {
+        var html = '<div class="probleme">';
+        html += '<h3 class="propositions">' + this.Formule + '</h3>';
+        html += '<p class="enonce">' + this.Description + '</p>';
+        html += '<p class="solutions"></p>';
+        html += '<div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>';
+        html += '</div>';
+        return html;
+    }
+    AppendHtmlTo($parent) {
+        $parent.append(this.ToHtml());
+        this.$div = $parent.children('div.probleme:last');
 
+        // Masquer les explications par défaut et les rendre montrables
+        this.$div.find('div.explications').each(function() {
+            var $explications = $(this);
+            $explications.find('.details').hide();
+            $explications.find('h4').css('cursor', 'pointer').on('click', function() {
+                $explications.find('.details').toggle();
+            });
+        });
 
+    }
 }
 
 var Uniquifier = function(tableau) {
@@ -243,12 +169,140 @@ var JeuxLibellesValeurs = {
     'Booléen': ['0^!1', '!0^1', '!0^!1', '0^1'],
 };
 
+var JeuxDefinitionsOperateurs = {
+    'Thomas': {
+        'Not':[1,0,2,3],
+        'EgalStrict':[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],
+        'EgalFlou':[[1,0,2,3],[0,1,2,3],[2,2,1,0],[3,3,0,1]],
+        'Implique':[[1,1,1,1],[0,1,2,3],[2,1,1,0],[3,1,0,1]],
+    }
+}
+
+var V0 = new Operateur(0, 0);
+var V1 = new Operateur(0, 1);
+var V2 = new Operateur(0, 2);
+var V3 = new Operateur(0, 3);
+var OperateurNot = new Operateur(1, JeuxDefinitionsOperateurs.Thomas.Not, 'Not');
+var OperateurEgalStrict = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalStrict, 'Egal strict');
+var OperateurEgalFlou = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalFlou, 'Egal flou');
+var OperateurImplique = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.Implique, 'Implique');
+
+
 var libellesValeurs = JeuxLibellesValeurs['Thomas'];
 
 var libelleOperateurEgalstrict = '==';
 var libelleOperateurEgalflou = '=';
 var libelleOperateurNot = '!';
 var libelleOperateurImplique = '=>';
+
+var Problemes = [];
+var p = new Variable('P');
+var p1 = new Variable('P1');
+var p2 = new Variable('P2');
+var p3 = new Variable('P3');
+var a = new Variable('A');
+var b = new Variable('B');
+var c = new Variable('C');
+Problemes.push(new Probleme({
+    Nom: 'Identité',
+    Formule: 'P <span class="egalstrict"></span> P',
+    Description: 'Problème de l\'identité, une proposition est-elle équivalente à elle-même',
+    Propositions: [new Proposition(OperateurEgalStrict, [p,p])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Double négation',
+    Formule: 'P <span class="egalstrict"></span> <span class="not"></span> <span class="not"></span> P',
+    Description: 'Problème de l\'identité après double négation',
+    Propositions: [new Proposition(OperateurEgalStrict, [p,
+        new Proposition(OperateurNot, [new Proposition(OperateurNot, [p])])
+    ])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Négation',
+    Formule: 'P <span class="egalflou"></span> <span class="not"></span> P',
+    Description: 'Problème de l\'identité après simple négation',
+    Propositions: [new Proposition(OperateurEgalFlou, [p, new Proposition(OperateurNot, [p])])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Egalité stricte',
+    Formule: 'P1 <span class="egalstrict"></span> P2',
+    Description: 'Problème de l\'identité stricte de deux propositions indépendantes (test trivial des problèmes à plusieurs variables',
+    Propositions: [new Proposition(OperateurEgalStrict, [p1, p2])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'implication réflexive',
+    Formule: 'P <span class="implique"></span> P',
+    Description: 'Problème de la réflexivité de l\'opérateur implication',
+    Propositions: [new Proposition(OperateurImplique, [p, p])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Contraposition',
+    Formule: '(A <span class="implique"></span> B) <span class="egalstrict"></span> (<span class="not"></span> B <span class="implique"></span> <span class="not"></span> A)',
+    Description: 'Problème de la contraposition de deux variables indépendantes',
+    Propositions: [new Proposition(OperateurEgalStrict, [
+        new Proposition(OperateurImplique, [a, b]),
+        new Proposition(OperateurImplique, [new Proposition(OperateurNot, [b]), new Proposition(OperateurNot, [a])]),
+    ])]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 2',
+    Formule: 'P1 <span class="egalflou"></span> </span> <span class="not"></span> P2 ; P2 <span class="egalflou"></span> </span> <span class="not"></span> P1',
+    Description: 'Alice dit que Bob ment ; Bob dit que Alice ment',
+    Propositions: [
+        new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
+        new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [a])])
+    ]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 3',
+    Formule: 'P1 <span class="egalflou"></span> </span> <span class="not"></span> P2 ; P2  <span class="egalflou"></span> </span> <span class="not"></span> P3 ; P3  <span class="egalflou"></span> </span> <span class="not"></span> P1',
+    Description: 'Alice dit que Bob ment ; Bob dit que Clara ment ; Clara dit que Alice ment',
+    Propositions: [
+        new Proposition(OperateurEgalFlou, [a, new Proposition(OperateurNot, [b])]),
+        new Proposition(OperateurEgalFlou, [b, new Proposition(OperateurNot, [c])]),
+        new Proposition(OperateurEgalFlou, [c, new Proposition(OperateurNot, [a])])
+    ]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 3, variante',
+    Formule: 'P1 <span class="egalstrict"></span> (P2 <span class="egalflou"></span> <span class="v0"></span>) ; P2 <span class="egalstrict"></span> (P3 <span class="egalflou"></span> <span class="v0"></span>) ; P3 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v2"></span>)',
+    Description: 'Alice dit que Bob ment ; Bob dit que Clara ment ; Clara dit que Alice ne dit ni vrai ni faux',
+    Propositions: [
+        new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+        new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p3, V0])]),
+        new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+    ]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 2 avec observateur',
+    Formule: 'P1 <span class="egalstrict"></span> (P2 <span class="egalflou"></span> <span class="v0"></span>) ; P2 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v0"></span>) ; P3 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v2"></span>)',
+    Description: 'Alice dit que Bob ment ; Bob dit que Alice ment ; Clara dit que Alice ne dit ni vrai ni faux',
+    Propositions: [
+        new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+        new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V0])]),
+        new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+    ]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 2, variante',
+    Formule: 'P1 <span class="egalstrict"></span> (P2 <span class="egalflou"></span> <span class="v0"></span>) ; P2 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v1"></span>)',
+    Description: 'Alice dit que Bob ment ; Bob dit que Alice dit vrai',
+    Propositions: [
+        new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+        new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])])
+    ]
+}));
+Problemes.push(new Probleme({
+    Nom: 'Menteur à 2 avec observateur, variante',
+    Formule: 'P1 <span class="egalstrict"></span> (P2 <span class="egalflou"></span> <span class="v0"></span>) ; P2 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v1"></span>) ; P3 <span class="egalstrict"></span> (P1 <span class="egalflou"></span> <span class="v2"></span>)',
+    Description: 'Alice dit que Bob ment ; Bob dit que Alice dit vrai ; Clara dit que Alice ne dit ni vrai ni faux',
+    Propositions: [
+        new Proposition(OperateurEgalStrict, [p1, new Proposition(OperateurEgalFlou, [p2, V0])]),
+        new Proposition(OperateurEgalStrict, [p2, new Proposition(OperateurEgalFlou, [p1, V1])]),
+        new Proposition(OperateurEgalStrict, [p3, new Proposition(OperateurEgalFlou, [p1, V2])]),
+    ]
+}));
+
 
 var AfficherLibellesValeurs = function() {
     for (var i=0; i<4; i++) {
@@ -269,11 +323,8 @@ var AfficherLibellesOperateurs = function() {
 }
 
 var ResoudreProblemes = function() {
-    $('div.probleme').each(function() {
-        var idprobleme = $(this).find('[idprobleme]').attr('idprobleme');
-        var probleme = new Probleme(idprobleme);
-        probleme.Resoudre($(this).find('p.solutions'), $(this).find('.explications .details'));
-    });
+    for (var probleme of Problemes)
+        probleme.Resoudre();
 }
 
 $(document).ready(function() {
@@ -284,9 +335,6 @@ $(document).ready(function() {
             $(this).append('<option value="' + i + '" class="v' + i + '">' + + '</option>');
         $(this).val($(this).attr('defaut'));
     });
-
-    AfficherLibellesValeurs();
-    AfficherLibellesOperateurs();
 
     // Afficher les jeux de libellés de valeurs
     var html = $('.jeuxnomsvaleurs').html();
@@ -306,15 +354,6 @@ $(document).ready(function() {
         ResoudreProblemes();
     });
 
-    // Masquer les explications par défaut et les rendre montrables
-    $('div.explications').each(function() {
-        var $explications = $(this);
-        $explications.find('.details').hide();
-        $explications.find('h4').css('cursor', 'pointer').on('click', function() {
-            $explications.find('.details').toggle();
-        });
-    });
-
     // Permettre de déplier les paramètres des opérateurs
     $('div.operateur').each(function() {
         var $operateur = $(this);
@@ -330,6 +369,13 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Afficher les problèmes
+    for (var probleme of Problemes)
+        probleme.AppendHtmlTo($('div.problemes'));
+
+    AfficherLibellesValeurs();
+    AfficherLibellesOperateurs();
 
     // Observer les changements de symbole des opérateurs
     $('input.symboleoperateur').on('change keypress keyup', function() {

@@ -10,9 +10,10 @@ Rendre facultatif la résolution des problèmes un à un (à cause des problème
 Faire des jeux de définition des opérateurs
 
 Ajouter des problèmes avec plusieurs propositions
+Ajouter des problèmes multivalués
 Travailler les opérateurs OU et ET et XOU
 Travailler sur l'inférence : A == 1 ; A => B
 
 - Parser de formules
 - Traitement des boucles de récusion dans les problèmes
-- Logique multivaluée
+X Logique multivaluée

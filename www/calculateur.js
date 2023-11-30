@@ -22,7 +22,7 @@ class Operateur {
                 break;
         }
         if ($explications && CalculsDetailles && this.Arite >= 0)
-            $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + valeursArgs.join(',') + ' :' + libellesValeurs[resultat] + '<br>');
+            $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + valeursArgs.map(function(v) {return libellesValeurs[v]}).join(',') + ' :' + libellesValeurs[resultat] + '<br>');
         return resultat;
     }
     ToString() {
@@ -30,6 +30,68 @@ class Operateur {
         return this.Nom;
     }
 }
+
+
+function Complement(valeurs) {
+    var output = [];
+    for (var i=0; i<4; i++) if (!valeurs.includes(i)) output.push(i);
+    return output;
+}
+function ArrayValeurToString(valeurs) {
+    return '{' + valeurs.map(function(v) {return libellesValeurs[v]}).join(',') + '}';
+}
+class OperateurMultivaleur extends Operateur {
+    constructor(ensembleValeurs) {
+        super(0, [] , 'V+');
+        this.EnsembleValeurs = ensembleValeurs;
+    }
+    Calculer( $explications) {
+        return this.EnsembleValeurs;
+    }
+    ToString() {
+        return ArrayValeurToString(this.EnsembleValeurs);
+    }
+}
+
+class OperateurNotMulti extends Operateur {
+    constructor() {
+        super(1, [] , 'Not');
+    }
+    Calculer(args, $explications) {
+        var resultat;
+        var input = args[0].Calculer();
+        var output = Complement(input);
+        if ($explications && CalculsDetailles)
+            $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur ' + ArrayValeurToString(input) + ' : ' + ArrayValeurToString(output) +'<br>');
+        return output;
+    }
+}
+
+class OperateurDireveriteMulti extends Operateur {
+    constructor() {
+        super(2, [] , 'Direverite');
+    }
+    Calculer(args, $explications) {
+        var resultat;
+        var input1 = args[0].Calculer();
+        var input2 = args[1].Calculer();
+        if (input1 instanceof Array) { // Branches !
+
+        } else { // Pas branches !
+            switch (input1) {
+                case 0: resultat = Complement(input2); break;
+                case 1: resultat = input2; break;
+                case 2: resultat = []; break;
+                case 3: resultat = [0, 1, 2, 3]; break;
+            }
+        }
+        if ($explications && CalculsDetailles && this.Arite >= 0)
+            $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + input1 + ' et ' + ArrayValeurToString(input2) + ' : ' + ArrayValeurToString(resultat) + '<br>');
+        return resultat;
+    }
+}
+
+
 
 class Proposition {
     constructor(operateur, args) {
@@ -40,9 +102,48 @@ class Proposition {
         var variables = [];
         for (var a of this.Arguments) {
             if (a instanceof Variable) variables.push(a);
-            if (a instanceof Proposition) variables.push(...a.GetVariables()); // TODO : protection contre la récursion
+            if (a instanceof Proposition) variables.push(...a.GetVariables()); // TODO : protection contre les boucles de récursion
         }
         return Uniquifier(variables);
+    }
+    TrouverVariablePropositionDansArguments() {
+        if (this.Operateur.Arite == 2) {
+            var variable, proposition;
+            if (this.Arguments[0] instanceof Variable && this.Arguments[1] instanceof Proposition) {
+                variable = this.Arguments[0];
+                proposition = this.Arguments[1];
+            }
+            if (this.Arguments[1] instanceof Variable && this.Arguments[0] instanceof Proposition) {
+                variable = this.Arguments[1];
+                proposition = this.Arguments[0];
+            }
+            if (variable != undefined) return [variable, proposition];
+        }
+        return [null, null];
+    }
+    ChercherDependancesVariables() {
+        var [variable, proposition] = this.TrouverVariablePropositionDansArguments();
+        if (variable != null) {
+            variable.Dependances.push(...proposition.GetVariables());
+            proposition.ChercherDependancesVariables(); // TODO : protection contre les boucles de récursion
+        }
+    }
+    EstDetermineePar(variables) {
+        if (this.Operateur.Nom=='Egal strict') {
+            var [variable, proposition] = this.TrouverVariablePropositionDansArguments();
+            if (variable != null) {
+                if (variables.includes(variable)) return false; // Cette proposition a pour variable d'affectation une des variables passées en paramètre, on considère qu'elle n'est pas déterminée par
+                var variablesProposition = proposition.GetVariables();
+                var determinee = true;
+                for (var vp of variablesProposition)
+                    if (!variables.includes(vp))
+                        determinee = false;
+                return determinee;
+            }
+        } else {
+            // TODO : arrêter de ne savoir travailler qu'avec les égalités (à réfléchir)
+        }
+        return false;
     }
     Calculer($explications) {
         return this.Operateur.Calculer(this.Arguments, $explications);
@@ -155,6 +256,102 @@ class Probleme {
         });
 
     }
+}
+
+class ProblemeMultivalue extends Probleme {
+
+    constructor(args) {
+        super(args);
+    }
+
+    Resoudre() {
+        var $solutions = this.$div.find('p.solutions');
+        var $explications = this.$div.find('.explications .details');
+        this.Solutions = [];
+        $explications.html('');
+        $explications.append('Début de la résolution du problème.<br>');
+        $explications.append('Description du problème : ' + this.ToString() + '.<br>');
+        $explications.append('Recherche des variables.<br>');
+        this.Variables = this.GetVariables();
+        $explications.append('Variables trouvées (' + this.Variables.length + ') : ' + this.Variables.map(function(v) {return v.Nom}).join(', ') + '<br>');
+
+        $explications.append('Construction du graphe de dépendance des variables.<br>');
+        for (var v of this.Variables) v.Dependances = [];
+        for (var p of this.Propositions) {
+            p.ChercherDependancesVariables();
+        }
+        this.VariablesLibres = []
+        for (var v of this.Variables) {
+            v.Dependances = Uniquifier(v.Dependances);
+            $explications.append('La variable ' + v.Nom + ' est dépendante de : ' + v.Dependances.map(function(v) {return v.Nom}).join(', ') + '.<br>');
+            if (v.Dependances.length == 0) this.VariablesLibres.push(v);
+        }
+        $explications.append('Variables libres trouvées (' + this.VariablesLibres.length + ') : ' + this.VariablesLibres.map(function(v) {return v.Nom}).join(', ') + '<br>');
+
+        this.InitialiserVariables();
+        this.VariablesLibres[0].Valeur = -1; // Pour passer le premier while
+        while(this.IncrementerVariable(0)) {
+            $explications.append('Calcul avec les valuations suivantes : ' + this.VariablesLibres.map(function(v) {return v.Nom + '::' + libellesValeurs[v.Valeur];}).join(', ') + '<br>');
+            this.ResoudreEnForcant([], [], $explications, '');
+        }
+        $solutions.html('Solutions trouvées (' + this.Solutions.length + ') : <br>' + this.Solutions.map(function(s) {return s.map(function(v) {return libellesValeurs[v]}).join(',') }).join('<br>'));
+
+    }
+
+    ResoudreEnForcant(variablesForcees, valeursForcees, $explications, nomBranche) {
+
+        // Chercher les propositions qui sont déterminées par les variables forcées
+        for (var i in variablesForcees) variablesForcees[i].Valeur = valeursForcees[i];
+        var variablesValorisees = [...this.VariablesLibres, ...variablesForcees];
+
+        for (var ip in this.Propositions) {
+            var p = this.Propositions[ip];
+            if (p.EstDetermineePar(variablesValorisees)) {
+                var [variableaffectation, sousproposition] = p.TrouverVariablePropositionDansArguments();
+                var vals = sousproposition.Calculer();
+                if (nomBranche) {
+                    $explications.append('Branche ' + nomBranche + ' ');
+                    $explications.append('(' + variablesValorisees.map(function(v) {return v.Nom + '::' + libellesValeurs[v.Valeur];}).join(', ') + '). ');
+                }
+                $explications.append('Selon la proposition ' + ip + ', ' + variableaffectation.Nom + ' peut prendre les valeurs' + ArrayValeurToString(vals) + '.<br>');
+                if (vals.length > 0) {
+                    if (variablesValorisees.length == this.Variables.length-1) { // On a tout valorisé
+                        for (var i in vals) {
+                            var val = vals[i];
+                            var solution = [];
+                            for (var v of variablesValorisees) solution.push(v.Valeur);
+                            solution.push(val);
+                            $explications.append('Solution trouvée : ' + solution.map(function(v) {return libellesValeurs[v]}).join(',') + '<br>');
+                            this.Solutions.push(solution);
+                        }
+                    } else {
+                        $explications.append('Création de ' + vals.length + ' branches de calcul.<br>');
+                        for (var i in vals) {
+                            var val = vals[i];
+                            this.ResoudreEnForcant([...variablesForcees, variableaffectation], [...valeursForcees, val], $explications, ((nomBranche != '') ? (nomBranche + '-') : '') + (parseInt(i,10) + 1).toString());
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    InitialiserVariables() {
+        for (var v of this.VariablesLibres) v.Valeur = 0;
+    }
+    IncrementerVariable(i) {
+        var v = this.VariablesLibres[i];
+        v.Valeur++;
+        if (v.Valeur >= 4) {
+            if (i >= this.VariablesLibres.length-1) return false; // Dernière valeur de la dernière variable
+            v.Valeur = 0;
+            return this.IncrementerVariable(i+1);
+        } else {
+            return true;
+        }
+    }
+
 }
 
 var Uniquifier = function(tableau) {
@@ -303,6 +500,21 @@ Problemes.push(new Probleme({
     ]
 }));
 
+// Problème multivalué
+var OperateurDireverite = new OperateurDireveriteMulti();
+var Chat = new Variable('CHAT');
+var Alice = new Variable('ALICE');
+var Bob = new Variable('BOB');
+Problemes.push(new ProblemeMultivalue({
+    Nom: 'Chat multivalué',
+    Formule: 'CHAT = DIREVERITE(ALICE, 1T) ; CHAT = DIREVERITE(ALICE, 0T) ; ALICE = DIREVERITE(BOB,  1)',
+    Description: 'Alice dit que le chat est blanc. Alice dit que le chat est noir. Bob dit que Alice est strictement sincère.',
+    Propositions: [
+        new Proposition(OperateurEgalStrict, [Chat, new Proposition(OperateurDireverite, [Alice, new OperateurMultivaleur([1,3])])]),
+        new Proposition(OperateurEgalStrict, [Chat, new Proposition(OperateurDireverite, [Alice, new OperateurMultivaleur([0,3])])]),
+        new Proposition(OperateurEgalStrict, [Alice, new Proposition(OperateurDireverite, [Bob, new OperateurMultivaleur([1])])]),
+    ]
+}));
 
 var AfficherLibellesValeurs = function() {
     for (var i=0; i<4; i++) {

@@ -8,6 +8,8 @@ X Mettre les problèmes les uns à côté des autres
 X Rendre repliable la définition des opérateurs
 Rendre facultatif la résolution des problèmes un à un (à cause des problèmes qui vont être trop lourds à calculer en l'état)
 Faire des jeux de définition des opérateurs
+X Afficher les résultats des problèmes sous la forme d'une table de vérité générale avec les résultats des opérateurs
+Explication des problèmes : tout détailler en langage naturel
 
 Ajouter des problèmes avec plusieurs propositions
 Ajouter des problèmes multivalués

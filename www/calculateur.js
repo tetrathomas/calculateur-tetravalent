@@ -1,25 +1,35 @@
 var CalculsDetailles = false;
 
 class Operateur {
-    constructor(arite, valeurs, nom) {
+    static GetFromClasse(classe) {
+        switch (classe) {
+            case 'not': return OperateurNot; break;
+            case 'egalstrict': return OperateurEgalStrict; break;
+            case 'egalflou': return OperateurEgalFlou; break;
+            case 'implique': return OperateurImplique; break;
+        }
+        return null;
+    }
+    constructor(arite, valeurs, nom, symbole) {
         this.Arite = arite;
         this.Valeurs = valeurs;
         this.Nom = nom;
+        this.Symbole = symbole;
     }
-    Calculer(args, $explications) {
+    Calculer($explications, args) { // args peut être un tableau d'objets calculables ou bien un tableau de valeurs
         var resultat;
         var valeursArgs = [];
+        if (args)
+            for (var a of args) {
+                if (a instanceof Object)
+                    valeursArgs.push(a.Calculer($explications));
+                else
+                    valeursArgs.push(a);
+            }
         switch (this.Arite) {
             case 0: resultat = this.Valeurs; break;
-            case 1:
-                valeursArgs.push(args[0].Calculer($explications));
-                resultat = this.Valeurs[valeursArgs[0]];
-                break;
-            case 2:
-                valeursArgs.push(args[0].Calculer($explications));
-                valeursArgs.push(args[1].Calculer($explications));
-                resultat = this.Valeurs[valeursArgs[0]][valeursArgs[1]];
-                break;
+            case 1: resultat = this.Valeurs[valeursArgs[0]]; break;
+            case 2: resultat = this.Valeurs[valeursArgs[0]][valeursArgs[1]]; break;
         }
         if ($explications && CalculsDetailles && this.Arite >= 0)
             $explications.append('Résultat de l\'opérateur ' + this.Nom + ' sur les arguments ' + valeursArgs.map(function(v) {return libellesValeurs[v]}).join(',') + ' :' + libellesValeurs[resultat] + '<br>');
@@ -28,6 +38,14 @@ class Operateur {
     ToString() {
         if (this.Arite == 0) return libellesValeurs[this.Valeurs];
         return this.Nom;
+    }
+    ToStringABC() { // Renvoie !A pour ou A => B
+        switch (this.Arite) {
+            case 0: return libellesValeurs[this.Valeurs];
+            case 1: return this.Symbole + 'A';
+            case 2: return 'A' + this.Symbole + 'B';
+        }
+        return '';
     }
 }
 
@@ -45,7 +63,7 @@ class OperateurMultivaleur extends Operateur {
         super(0, [] , 'V+');
         this.EnsembleValeurs = ensembleValeurs;
     }
-    Calculer( $explications) {
+    Calculer($explications) {
         return this.EnsembleValeurs;
     }
     ToString() {
@@ -57,7 +75,7 @@ class OperateurNotMulti extends Operateur {
     constructor() {
         super(1, [] , 'Not');
     }
-    Calculer(args, $explications) {
+    Calculer($explications, args) {
         var resultat;
         var input = args[0].Calculer();
         var output = Complement(input);
@@ -71,7 +89,7 @@ class OperateurDireveriteMulti extends Operateur {
     constructor() {
         super(2, [] , 'Direverite');
     }
-    Calculer(args, $explications) {
+    Calculer($explications, args) {
         var resultat;
         var input1 = args[0].Calculer();
         var input2 = args[1].Calculer();
@@ -146,7 +164,7 @@ class Proposition {
         return false;
     }
     Calculer($explications) {
-        return this.Operateur.Calculer(this.Arguments, $explications);
+        return this.Operateur.Calculer($explications, this.Arguments);
     }
     ToString() {
         var str = this.Operateur.ToString();
@@ -197,6 +215,7 @@ class Probleme {
         var $explications = this.$div.find('.explications .details');
         this.Solutions = [];
         $explications.html('');
+        $('.tableverite tr.header').append('<th>' + this.Formule + '</th>');
         $explications.append('Début de la résolution du problème.<br>');
         $explications.append('Description du problème : ' + this.ToString() + '.<br>');
         $explications.append('Recherche des variables.<br>');
@@ -213,6 +232,12 @@ class Probleme {
                 $explications.append('La proposition ' + ip + ' prend la valeur ' + libellesValeurs[vp] + '<br>');
                 if (vp != 1) toutesvraies = false;
             }
+            var selecteur = '';
+            for (var iv in this.Variables) {
+                var v = this.Variables[iv]
+                selecteur += '[' + String.fromCharCode(97+parseInt(iv,10)) + '=' + v.Valeur + ']';
+            }
+            $('.tableverite tr' + selecteur).append('<td>' + libellesValeurs[toutesvraies ? 1 : 0] + '</td>');
             if (toutesvraies) {
                 this.Solutions.push(this.Variables.map(function(v) {return v.Valeur}));
             }
@@ -308,7 +333,7 @@ class ProblemeMultivalue extends Probleme {
             var p = this.Propositions[ip];
             if (p.EstDetermineePar(variablesValorisees)) {
                 var [variableaffectation, sousproposition] = p.TrouverVariablePropositionDansArguments();
-                var vals = sousproposition.Calculer();
+                var vals = sousproposition.Calculer($explications);
                 if (nomBranche) {
                     $explications.append('Branche ' + nomBranche + ' ');
                     $explications.append('(' + variablesValorisees.map(function(v) {return v.Nom + '::' + libellesValeurs[v.Valeur];}).join(', ') + '). ');
@@ -379,18 +404,13 @@ var V0 = new Operateur(0, 0);
 var V1 = new Operateur(0, 1);
 var V2 = new Operateur(0, 2);
 var V3 = new Operateur(0, 3);
-var OperateurNot = new Operateur(1, JeuxDefinitionsOperateurs.Thomas.Not, 'Not');
-var OperateurEgalStrict = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalStrict, 'Egal strict');
-var OperateurEgalFlou = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalFlou, 'Egal flou');
-var OperateurImplique = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.Implique, 'Implique');
+var OperateurNot = new Operateur(1, JeuxDefinitionsOperateurs.Thomas.Not, 'Not', '!');
+var OperateurEgalStrict = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalStrict, 'Egal strict', '==');
+var OperateurEgalFlou = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.EgalFlou, 'Egal flou', '=');
+var OperateurImplique = new Operateur(2, JeuxDefinitionsOperateurs.Thomas.Implique, 'Implique', '=>');
 
 
 var libellesValeurs = JeuxLibellesValeurs['Thomas'];
-
-var libelleOperateurEgalstrict = '==';
-var libelleOperateurEgalflou = '=';
-var libelleOperateurNot = '!';
-var libelleOperateurImplique = '=>';
 
 var Problemes = [];
 var p = new Variable('P');
@@ -524,19 +544,42 @@ var AfficherLibellesValeurs = function() {
 }
 
 var AfficherLibellesOperateurs = function() {
-    $('.definitions .operateurs [name=egalstrict]').val(libelleOperateurEgalstrict);
-    $('.definitions .operateurs [name=egalflou]').val(libelleOperateurEgalflou);
-    $('.definitions .operateurs [name=not]').val(libelleOperateurNot);
-    $('.definitions .operateurs [name=implique]').val(libelleOperateurImplique);
-    $('span.egalstrict').html(libelleOperateurEgalstrict);
-    $('span.egalflou').html(libelleOperateurEgalflou);
-    $('span.not').html(libelleOperateurNot);
-    $('span.implique').html(libelleOperateurImplique);
+    $('.definitions .operateurs [name=egalstrict]').val(OperateurEgalStrict.Symbole);
+    $('.definitions .operateurs [name=egalflou]').val(OperateurEgalFlou.Symbole);
+    $('.definitions .operateurs [name=not]').val(OperateurNot.Symbole);
+    $('.definitions .operateurs [name=implique]').val(OperateurImplique.Symbole);
+    $('span.egalstrict').html(OperateurEgalStrict.Symbole);
+    $('span.egalflou').html(OperateurEgalFlou.Symbole);
+    $('span.not').html(OperateurNot.Symbole);
+    $('span.implique').html(OperateurImplique.Symbole);
 }
 
 var ResoudreProblemes = function() {
+    ConstruireTableVerite(); // Chaque problème ajoutera sa colonne dans la table de vérité donc remettons là à 0
     for (var probleme of Problemes)
         probleme.Resoudre();
+    AfficherLibellesOperateurs(); // Uniquement à cause des problèmes qui ont mis leur formule dans la table de vérite :(
+}
+
+var ConstruireTableVerite = function() { // Construire ou reconstruire la table de vérité dans la div prévue à cet effet
+    $table = $('.tableverite').html('<table></table>').children();
+    $table.append($trheader = $('<tr class="header"></tr>'));
+    $trheader.append('<th>A</th><th>B</th><th>C</th>');
+    var operateurs = [OperateurNot, OperateurEgalStrict, OperateurEgalFlou, OperateurImplique];
+    for (var operateur of operateurs) $trheader.append('<th>' + operateur.ToStringABC() + '</th>')
+    for (var c=0; c<4; c++) {
+        for (var a=0; a<4; a++) {
+            for (var b=0; b<4; b++) {
+                $table.append($tr = $('<tr a="' + a + '" b="' + b + '" c="' + c + '"></tr>'));
+                if (c==0 && a==3 && b==3) $tr.addClass('lastab');
+                $tr.append('<td>' + libellesValeurs[a] + '</td><td>' + libellesValeurs[b] + '</td><td>' + libellesValeurs[c] + '</td>');
+                for (var i in operateurs) {
+                    var operateur = operateurs[i];
+                    $tr.append('<td>' + libellesValeurs[operateur.Calculer(null,[a,b,c])] + '</td>');
+                }
+            }
+        }
+    }
 }
 
 $(document).ready(function() {
@@ -591,12 +634,8 @@ $(document).ready(function() {
 
     // Observer les changements de symbole des opérateurs
     $('input.symboleoperateur').on('change keypress keyup', function() {
-        switch ($(this).attr('name')) {
-            case 'egalstrict': libelleOperateurEgalstrict = $(this).val(); break;
-            case 'egalflou': libelleOperateurEgalflou = $(this).val(); break;
-            case 'not': libelleOperateurNot = $(this).val(); break;
-            case 'implique': libelleOperateurImplique = $(this).val(); break;
-        }
+        var operateur = Operateur.GetFromClasse($(this).attr('name'));
+        if (operateur != null) operateur.Symbole = $(this).val();
         AfficherLibellesOperateurs();
     })
 
@@ -604,14 +643,8 @@ $(document).ready(function() {
     $('div.definitions select').on('change', function() {
         var name = $(this).attr('name').split('-');
         var nomOperateur = name.shift(); // Premier élément
-        var operateur = null;
+        var operateur = Operateur.GetFromClasse(nomOperateur);
         var args = name; // Autres éléments
-        switch (nomOperateur) {
-            case 'not': operateur = OperateurNot; break;
-            case 'egalstrict': operateur = OperateurEgalStrict; break;
-            case 'egalflou': operateur = OperateurEgalFlou; break;
-            case 'implique': operateur = OperateurImplique; break;
-        }
         switch (operateur.Arite) {
             case 1:
                 operateur.Valeurs[parseInt(args[0][1], 10)] = parseInt($(this).val(), 10);

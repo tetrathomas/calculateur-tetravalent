@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <title>Calculateur tétravalent</title>
     <script src="lib/jquery-3.7.1.min.js"></script>
+    <script src="lib/jqueryui/jquery-ui.min.js"></script>
     <script src="calculateur.js"></script>
+    <link href="lib/jqueryui/jquery-ui.min.css" rel="stylesheet" />
+<!--    <link href="lib/jqueryui/jquery-ui.structure.min.css" rel="stylesheet" />-->
+<!--    <link href="lib/jqueryui/jquery-ui.theme.min.css" rel="stylesheet" />-->
     <style type="text/css">
         .hbox {display: flex;}
         .definitions {min-width:300px;}
         .resultats {margin-left:20px;}
-        .probleme {margin:10px;border:1px solid gray;padding:10px;}
-        .probleme h3 {margin:0;text-align: center;}
-        .probleme h4 {margin:0;font-weight: normal;text-decoration: underline;}
         .problemes {display:flex;flex-wrap: wrap;}
+        .problemes .probleme {margin:10px;border:1px solid gray;padding:10px;}
+        .problemes .probleme h3 {margin:0;text-align: center;}
+        .problemes .probleme h4 {margin:0;font-weight: normal;text-decoration: underline;}
         .problemes .probleme {min-width:200px;}
+        .problemes .probleme .reduire {float:right;cursor:pointer;}
+        .problemesdisponibles .probleme .augmenter {float:right;cursor:pointer;}
+        .problemesdisponibles .probleme h3 {margin:5px;}
         .depliable {display: none;}
         .symboleoperateur {width:80px;}
         .tableverite table {border-collapse: collapse;}
@@ -24,6 +31,8 @@
 <body>
 
     <h1>Calculateur tétravalent</h1>
+
+    <h2>Paramètres généraux</h2>
 
     <input type="checkbox" name="details"> Calculs détaillés
 
@@ -212,6 +221,10 @@
                     </table>
                 </div>
             </div>
+
+            <h2>Problèmes disponibles</h2>
+
+            <div class="problemesdisponibles"></div>
 
         </div>
 

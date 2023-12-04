@@ -196,6 +196,7 @@ class Probleme {
         this.Description = args.Description;
         this.Propositions = args.Propositions;
         this.Formule = args.Formule;
+        this.EstActif = true;
     }
 
     ToString() {
@@ -259,26 +260,60 @@ class Probleme {
         }
     }
     ToHtml() {
-        var html = '<div class="probleme">';
-        html += '<h3 class="propositions">' + this.Formule + '</h3>';
-        html += '<p class="enonce">' + this.Description + '</p>';
-        html += '<p class="solutions"></p>';
-        html += '<div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>';
-        html += '</div>';
-        return html;
+        if (this.EstActif) {
+            var html = '<div class="probleme"><div class="reduire" tip="Réduire">▼</div>';
+            html += '<h3 class="propositions">' + this.Formule + '</h3>';
+            html += '<p class="enonce">' + this.Description + '</p>';
+            html += '<p class="solutions"></p>';
+            html += '<div class="explications"><h4>Voir les explications</h4><p class="details"></p></div>';
+            html += '</div>';
+            return html;
+        } else {
+            var html = '<div class="probleme"><div class="augmenter" tip="Calculer">⏵</div>';
+            html += '<h3 class="propositions" tip="' + this.Description + '">' + this.Formule + '</h3>';
+            html += '</div>';
+            return html;
+        }
     }
     AppendHtmlTo($parent) {
         $parent.append(this.ToHtml());
         this.$div = $parent.children('div.probleme:last');
 
+        BrancherTooltips(this.$div);
+        AfficherLibellesOperateurs(this.$div);
+        AfficherLibellesValeurs(this.$div);
+
         // Masquer les explications par défaut et les rendre montrables
-        this.$div.find('div.explications').each(function() {
-            var $explications = $(this);
-            $explications.find('.details').hide();
-            $explications.find('h4').css('cursor', 'pointer').on('click', function() {
-                $explications.find('.details').toggle();
+        if (this.EstActif) {
+
+            this.$div.find('div.explications').each(function () {
+                var $explications = $(this);
+                $explications.find('.details').hide();
+                $explications.find('h4').css('cursor', 'pointer').on('click', function () {
+                    $explications.find('.details').toggle();
+                });
             });
-        });
+
+            // Clic sur le bouton réduire
+            var thisProbleme = this;
+            this.$div.find('.reduire').on('click', function() {
+                thisProbleme.EstActif = false;
+                thisProbleme.$div.remove();
+                thisProbleme.AppendHtmlTo($('div.problemesdisponibles'));
+            });
+
+        } else {
+
+            // Clic sur le bouton augmenter
+            var thisProbleme = this;
+            this.$div.find('.augmenter').on('click', function() {
+                thisProbleme.EstActif = true;
+                thisProbleme.$div.remove();
+                thisProbleme.AppendHtmlTo($('div.problemes'));
+                thisProbleme.Resoudre();
+            });
+
+        }
 
     }
 }
@@ -536,22 +571,24 @@ Problemes.push(new ProblemeMultivalue({
     ]
 }));
 
-var AfficherLibellesValeurs = function() {
+var AfficherLibellesValeurs = function($elt) {
+    if ($elt == undefined) $elt = $(document);
     for (var i=0; i<4; i++) {
-        $('.definitions .valeurs [name=v' + i + ']').val(libellesValeurs[i]);
-        $('.v' + i).html(libellesValeurs[i]);
+        $elt.find('.definitions .valeurs [name=v' + i + ']').val(libellesValeurs[i]);
+        $elt.find('.v' + i).html(libellesValeurs[i]);
     }
 }
 
-var AfficherLibellesOperateurs = function() {
-    $('.definitions .operateurs [name=egalstrict]').val(OperateurEgalStrict.Symbole);
-    $('.definitions .operateurs [name=egalflou]').val(OperateurEgalFlou.Symbole);
-    $('.definitions .operateurs [name=not]').val(OperateurNot.Symbole);
-    $('.definitions .operateurs [name=implique]').val(OperateurImplique.Symbole);
-    $('span.egalstrict').html(OperateurEgalStrict.Symbole);
-    $('span.egalflou').html(OperateurEgalFlou.Symbole);
-    $('span.not').html(OperateurNot.Symbole);
-    $('span.implique').html(OperateurImplique.Symbole);
+var AfficherLibellesOperateurs = function($elt) {
+    if ($elt == undefined) $elt = $(document);
+    $elt.find('.definitions .operateurs [name=egalstrict]').val(OperateurEgalStrict.Symbole);
+    $elt.find('.definitions .operateurs [name=egalflou]').val(OperateurEgalFlou.Symbole);
+    $elt.find('.definitions .operateurs [name=not]').val(OperateurNot.Symbole);
+    $elt.find('.definitions .operateurs [name=implique]').val(OperateurImplique.Symbole);
+    $elt.find('span.egalstrict').html(OperateurEgalStrict.Symbole);
+    $elt.find('span.egalflou').html(OperateurEgalFlou.Symbole);
+    $elt.find('span.not').html(OperateurNot.Symbole);
+    $elt.find('span.implique').html(OperateurImplique.Symbole);
 }
 
 var ResoudreProblemes = function() {
@@ -582,7 +619,21 @@ var ConstruireTableVerite = function() { // Construire ou reconstruire la table 
     }
 }
 
+var BrancherTooltips = function($elt) {
+    $elt.find('[tip]').tooltip({
+        content: function () {
+            return $(this).attr('tip');
+        },
+        items: '[tip]',
+        show: false,
+        hide: false,
+        track: true
+    });
+
+};
+
 $(document).ready(function() {
+
 
     // Remplir les select de valeurs
     $('select.valeurs').each(function() {

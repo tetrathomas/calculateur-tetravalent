@@ -1,0 +1,21 @@
+Validité de @312_oay
+
+Plien312OAY = La validité de 312 est liée à celle de OAY
+
+Pmention312parOAYavant = VRAI, indiscutable = OAY a mentionné le code "312 OAY" dans ses tweets avant la création du compte @312_oay (25/03/20 < 28/03/20)
+Pmention312parOAYapres = VRAI, indiscutable = OAY a mentionné le code "312 OAY" dans ses tweets après la création du compte @312_oay (06/04/20, 05/07/20, 28/09/20, 22/11/20, 14/01/21)
+Pmetallicite = VRAI, discutable = 312 a indiqué l'indice de metallicité de YOUMA 3 heures avant OAY le 31/01/21
+PcreaFaussaire = VRAI, discutable = un faussaire a pu créer le compte 312_oay suite à l'indice laissé par OAY le 25/03/20
+
+Plien312OAY =
+    (Pmention312parOAYavant && !PcreaFaussaire)     // Si OAY a mentionné 312 OAY avant la création du compte, et qu'un faussaire n'a pas pu en profiter, alors le lien est avéré
+    || Pmention312parOAYapres                       // Si OAY a mentionné 312 OAY après la création du compte, il s'agit d'une validation de son appartenance
+    || Pmetallicite                                 // Si 312 a pu donner le bon indice de metallicité avant OAY, 312 dipose d'un secret OAY jamais divulgué, et est donc de la même source
+
+
+312_oay a été créé le 28 mars 2020 à 20:44:36
+
+
+Il existe un compte @312oay créé en 2015 et sans aucun tweet
+
+OAY et 312 se sont abondamment répondu ?

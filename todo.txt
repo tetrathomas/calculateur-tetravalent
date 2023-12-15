@@ -13,9 +13,10 @@ Explication des problèmes : tout détailler en langage naturel
 
 Ajouter des problèmes avec plusieurs propositions
 Ajouter des problèmes multivalués
-Travailler les opérateurs OU et ET et XOU
+X Travailler les opérateurs OU et ET
 Travailler sur l'inférence : A == 1 ; A => B
 
 - Parser de formules
-- Traitement des boucles de récusion dans les problèmes
+- Traitement des boucles de récursion dans les problèmes
 X Logique multivaluée
+Pouvoir manipuler par interface les contraintes sur les variables
